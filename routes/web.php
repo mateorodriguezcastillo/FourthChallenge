@@ -17,6 +17,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/cities', [CityController::class, 'index'])->name('cities.index');
-Route::post('/cities', [CityController::class, 'store'])->name('cities.store');
-Route::resource('products-ajax-crud', CityController::class);
+Route::get('/cities', [CityController::class,'index'])->name('cities.index');
+
+Route::get('/cities/create', [CityController::class,'create'])->name('cities.create');
+
+Route::post('/cities', [CityController::class,'store'])->name('cities.store');
+
+Route::get('/cities/{city}/edit', [CityController::class,'edit'])->name('cities.edit');
+
+Route::post('/cities/{city}/update', [CityController::class,'update'])->name('cities.update');
+
+Route::delete('/cities/{city}/delete', [CityController::class,'destroy'])->name('cities.destroy');

@@ -9,55 +9,57 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CityController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->ajax()) {
-            $cities = City::latest()->get();
-
-            return DataTables::of($cities)
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editProduct">Edit</a>';
-
-                    $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteProduct">Delete</a>';
-
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                //->addIndexColumn()
-                ->make(true);
+        if (request()->ajax()) {
+            $cities = City::sortable()->paginate(15)->withQueryString();
+            return response()->json([
+                'success' => true,
+                'cities' => $cities,
+            ]);
         }
+        return view('cities.index');
+    }
 
-        return view('testCities');
+    public function create()
+    {
+        return view('cities.create');
     }
 
     public function store(StoreCityRequest $request)
     {
-        $request->validated();
-
-        City::updateOrCreate($request->all());
-
-        return response()->json(['success'=>'Product saved successfully.']);
+        City::create($request->validated());
+        return response()->json([
+            'success' => true,
+            'message' => 'City created successfully.',
+        ]);
     }
 
-    public function edit($id)
+    public function edit(City $city)
     {
-        $city = City::find($id);
-        return response()->json($city);
+        return response()->json([
+            'success' => true,
+            'cities' => $city,
+        ]);
     }
 
-    public function destroy($id)
+    public function update(StoreCityRequest $request, City $city)
     {
-        City::find($id)->delete();
+        $city->update($request->validated());
+        return response()->json([
+            'success' => true,
+            'message' => 'City updated successfully.',
+        ]);
+    }
 
-        return response()->json(['success'=>'Product deleted successfully.']);
+    public function destroy(City $city)
+    {
+        if ($city) {
+            $city->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'City deleted successfully.',
+            ]);
+        }
     }
 }
-
-    // public function store(StoreCityRequest $request)
-    // {
-    //     $request->validated();
-
-    //     City::create($request->all());
-
-    //     return redirect()->route('cities.index');
-    // }
