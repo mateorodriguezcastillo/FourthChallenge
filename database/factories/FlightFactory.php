@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\City>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Flight>
  */
-class CityFactory extends Factory
+class FlightFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,8 @@ class CityFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->unique()->city(),
+            'departure' => fake()->dateTimeBetween('-1 year', today()),
+            'arrival' => fake()->dateTimeBetween(today(), '+1 year'),
         ];
     }
 }

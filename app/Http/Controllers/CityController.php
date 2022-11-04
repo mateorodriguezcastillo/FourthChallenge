@@ -12,7 +12,11 @@ class CityController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $cities = City::sortable()->paginate(15)->withQueryString();
+            $cities = City::sortable()
+                ->filter(request(['airline']))
+                ->withCount('departing_flights', 'arriving_flights')
+                ->paginate(15)
+                ->withQueryString();
             return response()->json([
                 'success' => true,
                 'cities' => $cities,
@@ -21,9 +25,9 @@ class CityController extends Controller
         return view('cities.index');
     }
 
-    public function create()
-    {
-        return view('cities.create');
+    public function getAll(){
+        $cities = City::all();
+        return response()->json($cities);
     }
 
     public function store(StoreCityRequest $request)

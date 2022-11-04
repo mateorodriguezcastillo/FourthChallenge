@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AirlineController;
+use App\Http\Controllers\CityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/cities', [CityController::class,'getAll'])->name('cities.getAll');
+
+Route::get('/airlines', [AirlineController::class,'get'])->name('airlines.get');
+Route::get('/airlines/all', [AirlineController::class,'getAll'])->name('airlines.getAll');
+Route::get('/airlines/create', [AirlineController::class,'create'])->name('airlines.create');
+Route::post('/airlines', [AirlineController::class,'store'])->name('airlines.store');
+Route::get('/airlines/{airline}/edit', [AirlineController::class,'edit'])->name('airlines.edit');
+Route::put('/airlines/{airline}/update', [AirlineController::class,'update'])->name('airlines.update');
+Route::delete('/airlines/{airline}/delete', [AirlineController::class,'destroy'])->name('airlines.destroy');

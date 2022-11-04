@@ -5,10 +5,10 @@
         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full">
         <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
             <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div class="relative bg-gray-900 rounded-lg border border-gray-200 text-white shadow dark:bg-gray-700">
                 <!-- Modal header -->
                 <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    <h3 class="text-xl font-semibold dark:text-white">
                         Manage City
                     </h3>
                     <button type="button" id="closeModal"
@@ -30,7 +30,7 @@
                         <div class="mb-4">
                             <label for="name" class="sr-only">Name</label>
                             <input type="text" name="name" id="nameInput" placeholder="City name"
-                                class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('name') }}">
+                                class="bg-clip-text border-2 w-full p-4 rounded-lg" value="{{ old('name') }}">
                             <span id="errorName" class="text-red-500 mt-2"></span>
                         </div>
                         <div>
@@ -47,32 +47,29 @@
 
 
     <section class="max-w-2xl container mx-auto my-12">
-        @if (Session::has('success'))
-            <div class="alert alert-success mt-3">
-                {{ Session::get('success') }}
-            </div>
-        @endif
-        <div class="rounded overflow-hidden shadow-lg bg-white">
+        <div class="rounded overflow-hidden shadow-lg bg-gray-800 border-2 border-white">
             <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2 text-center">All Cities</div>
+                <div class="font-bold text-xl mb-2 text-center text-white">All Cities</div>
                 <div>
-                    <div class="mb-4">
+                    <div class="mb-4 flex inline-flex">
                         <button id="createModal" data-action="{{ route('cities.store') }}"
                             class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                             type="button">
                             Create City
                         </button>
                         <button id="openModal" data-modal-toggle="defaultModal" hidden></button>
+                        <select id="selectAirline" class="ml-4 bg-gray-800 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll">
+                        </select>
                     </div>
                     <div>
-                        <table class="table-auto w-full">
-                            <thead>
+                        <table class="table-auto w-full text-white">
+                            <thead class="border-b-2 border-white">
                                 <tr>
-                                    <th class="px-4 py-2">@sortablelink('id', 'ID')</th>
-                                    <th class="px-4 py-2">@sortablelink('name')</th>
-                                    <th class="px-4 py-2">Arriving</th>
-                                    <th class="px-4 py-2">Departing</th>
-                                    <th class="px-4 py-2">Action</th>
+                                    <th class="px-4 py-2 text-sm font-semibold tracking-wide">@sortablelink('id', 'ID')</th>
+                                    <th class="px-4 py-2 text-sm font-semibold tracking-wide">@sortablelink('name')</th>
+                                    <th class="px-4 py-2 text-sm font-semibold tracking-wide">Arriving</th>
+                                    <th class="px-4 py-2 text-sm font-semibold tracking-wide">Departing</th>
+                                    <th class="px-4 py-2 text-sm font-semibold tracking-wide">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody" class="text-center items-center">

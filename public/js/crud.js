@@ -1,6 +1,8 @@
 const baseUrl = "http://localhost";
+let airline = 0;
 
 showCities();
+showAirlines();
 
 function table_city_row(res) {
     let htmlView = "";
@@ -11,14 +13,14 @@ function table_city_row(res) {
     }
 
     res.cities.data.forEach((city) => {
-        htmlView += "<tr>";
+        htmlView += `<tr class="border-b border-gray-700">`;
         htmlView += "<td>" + city.id + "</td>";
         htmlView += "<td>" + city.name + "</td>";
-        htmlView += "<td>" + "12" + "</td>";
-        htmlView += "<td>" + "24" + "</td>";
+        htmlView += "<td>" + city.arriving_flights_count + "</td>";
+        htmlView += "<td>" + city.departing_flights_count + "</td>";
         htmlView +=
             `<td>
-                        <div class="flex inline-flex">
+                        <div class="flex inline-flex mb-1 mt-1">
                             <button id="editModal" class="block text-white bg-yellow-300 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium mr-1 rounded-md text-sm px-3 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-modal-toggle="defaultModal"
                                 data-action="` +
             baseUrl +
@@ -39,14 +41,14 @@ function table_city_row(res) {
 
     htmlPagination = `<div class="flex flex-col items-center">
                         <!-- Help text -->
-                        <span class="text-sm text-gray-700 dark:text-gray-400">
-                            Showing <span class="font-semibold text-gray-900 dark:text-white">` + res.cities.from + `</span> to <span class="font-semibold text-gray-900 dark:text-white">` + res.cities.to + `</span> of <span class="font-semibold text-gray-900 dark:text-white">` + res.cities.total + `</span> Entries
+                        <span class="text-sm text-gray-200 dark:text-gray-400">
+                            Showing <span class="font-semibold text-white dark:text-white">` + res.cities.from + `</span> to <span class="font-semibold text-white dark:text-white">` + res.cities.to + `</span> of <span class="font-semibold text-white dark:text-white">` + res.cities.total + `</span> Entries
                         </span>
                             <nav aria-label="Page navigation example">
                                 <ul class="inline-flex -space-x-px mt-3">`;
     if (res.cities.prev_page_url) {
         htmlPagination += `<li class="page-item">
-                            <a class="page-link py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" href="` + res.cities.prev_page_url + `" data-url="` + res.cities.prev_page_url + `" aria-label="Previous">
+                            <a class="page-link py-2 px-3 ml-0 leading-tight text-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" href="` + res.cities.prev_page_url + `" data-url="` + res.cities.prev_page_url + `" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                             </a>
@@ -54,12 +56,12 @@ function table_city_row(res) {
     }
     for (let i = 1; i <= res.cities.last_page; i++) {
         htmlPagination += `<li class="page-item">
-                            <a class="page-link py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" href="` + res.cities.links[i].url + `" data-url="` + baseUrl + `/cities?page=` + i + `">` + i + `</a>
+                            <a class="page-link py-2 px-3 ml-0 leading-tight text-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" href="` + res.cities.links[i].url + `" data-url="` + baseUrl + `/cities?page=` + i + `">` + i + `</a>
                         </li>`;
     }
     if (res.cities.next_page_url) {
         htmlPagination += `<li class="page-item">
-                            <a class="page-link py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"` + res.cities.next_page_url + `" data-url="` + res.cities.next_page_url + `" aria-label="Next">
+                            <a class="page-link py-2 px-3 ml-0 leading-tight text-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" href="` + res.cities.next_page_url + `" data-url="` + res.cities.next_page_url + `" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -73,10 +75,26 @@ function table_city_row(res) {
     $("#tbody").html(htmlView);
 }
 
+function select_airline(airlines) {
+    let htmlView = "";
+    console.log(airlines);
+    if (airlines.length <= 0) {
+        htmlView +=
+            '<option value="">No airlines found.</option>';
+    } else {
+        htmlView += '<option value="0">All Airlines</option>';
+        airlines.forEach((airline) => {
+            htmlView += `<option href="` + window.location.href + `?airline=` + airline.id + `" value="` + airline.id + `">` + airline.name + `</option>`;
+        });
+    }
+    $("#selectAirline").html(htmlView);
+}
+
 // Read a page's GET URL variables and return them as an associative array.
 function getUrlVars()
 {
     var vars = [], hash;
+    console.log(window.location.href);
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++)
     {
@@ -87,7 +105,7 @@ function getUrlVars()
     return vars;
 }
 
-function showCities() {
+function showCities(airline_id) {
     let vars = getUrlVars();
     console.log(vars);
     let urlToPass = baseUrl + "/cities";
@@ -96,6 +114,9 @@ function showCities() {
     }
     if (vars.page) {
         urlToPass += "&page=" + vars.page;
+    }
+    if (airline_id && airline_id != 0) {
+        urlToPass += "&airline=" + airline_id;
     }
     console.log(urlToPass);
     $.ajax({
@@ -112,12 +133,35 @@ function showCities() {
     });
 }
 
+function showAirlines() {
+    $.ajax({
+        url: baseUrl + "/api/airlines/all",
+        type: "GET",
+        dataType: "json",
+        success: function (res) {
+            console.log(res);
+            select_airline(res);
+        },
+        error: function (err) {
+            console.log(err);
+        },
+    });
+}
+
 $("button#createModal").click(function () {
     let url = $(this).data("action");
     console.log(url);
     $("#openModal").click();
     $("#formData").trigger("reset");
     $("#formData").attr("action", url);
+});
+
+//function when select airline
+$("#selectAirline").change(function () {
+    let airline_id = $(this).val();
+    console.log(airline_id);
+    airline = airline_id;
+    showCities(airline_id);
 });
 
 // Event for created and updated posts
@@ -142,7 +186,7 @@ $("#formData").submit(function (e) {
             if (res.success == true) {
                 $("#formData").trigger("reset");
                 $("#closeModal").click();
-                showCities(); // call function show Posts
+                showCities(airline); // call function show Posts
                 Swal.fire("Success!", res.message, "success");
                 $("#errorName").text("");
             }
@@ -201,7 +245,7 @@ $(document).on("click", "button#btn-delete", function (e) {
                         "Your file has been deleted.",
                         "success"
                     );
-                    showCities();
+                    showCities(airline);
                 },
                 error: function (err) {
                     console.log(err);
