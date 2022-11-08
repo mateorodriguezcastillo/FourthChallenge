@@ -24,9 +24,14 @@ class AirlineController extends Controller
         return response()->json($airlines);
     }
 
+    public function getAirline(Airline $airline)
+    {
+        return response()->json($airline->load('cities'));
+    }
+
     public function getAll()
     {
-        $airlines = Airline::all();
+        $airlines = Airline::with('cities')->get();
 
         return response()->json($airlines);
     }

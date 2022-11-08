@@ -95,7 +95,7 @@ const showCities = (cities) => {
 }
 
 //procedure to show all cities
-fetch('http://localhost/api/cities')
+fetch('http://localhost/api/cities/all')
     .then(res => res.json())
     .then(data => showCities(data))
     .catch(err => console.log(err));

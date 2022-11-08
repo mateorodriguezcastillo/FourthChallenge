@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AirlineController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\FlightController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,3 +27,5 @@ Route::post('/cities/{city}/update', [CityController::class,'update'])->name('ci
 Route::delete('/cities/{city}/delete', [CityController::class,'destroy'])->name('cities.destroy');
 
 Route::get('/airlines', [AirlineController::class,'index'])->name('airlines.index');
+
+Route::get('/flights', [FlightController::class,'index'])->name('flights.index');
