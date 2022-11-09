@@ -151,6 +151,8 @@ function showAirlines() {
 $("button#createModal").click(function () {
     let url = $(this).data("action");
     console.log(url);
+    $("#errorName").text("");
+    $("#nameInput").removeClass("border-red-500");
     $("#openModal").click();
     $("#formData").trigger("reset");
     $("#formData").attr("action", url);
@@ -189,11 +191,13 @@ $("#formData").submit(function (e) {
                 showCities(airline); // call function show Posts
                 Swal.fire("Success!", res.message, "success");
                 $("#errorName").text("");
+                $("#nameInput").removeClass("border-red-500");
+
             }
         },
         error(err) {
             let errors = err.responseJSON.message;
-            $("#name").addClass("border-red-500");
+            $("#nameInput").addClass("border-red-500");
             $("#errorName").text(errors);
         },
     });
@@ -204,6 +208,8 @@ $(document).on("click", "button#editModal", function () {
     let id = $(this).data("id");
     let dataAction = $(this).data("action");
     console.log(dataAction);
+    $("#errorName").text("");
+    $("#nameInput").removeClass("border-red-500");
     $("#formData").trigger("reset");
     $("#formData").attr("action", dataAction);
     $.ajax({

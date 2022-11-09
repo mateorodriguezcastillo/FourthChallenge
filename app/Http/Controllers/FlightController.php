@@ -14,7 +14,11 @@ class FlightController extends Controller
 
     public function get()
     {
-        $flights = Flight::with('airline', 'origin', 'destination')->paginate(8);
+        //$flights = Flight::with('airline', 'origin', 'destination')->paginate(8);
+        $flights = Flight::filter(request(['city']))
+            ->with('airline', 'origin', 'destination')
+            ->paginate(8)
+            ->withQueryString();
 
         return response()->json($flights);
     }

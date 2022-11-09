@@ -29,12 +29,12 @@
                         @csrf
                         <div class="mb-4">
                             <label for="name" class="sr-only">Name</label>
-                            <input type="text" name="name" id="nameInput" placeholder="City name"
+                            <input type="text" name="name" id="nameInput" placeholder="Airline name"
                                 class="bg-clip-text border-2 w-full p-4 rounded-lg mb-1" value="{{ old('name') }}">
                             <span id="errorName" class="text-red-500 mt-2"></span>
                             <label for="name" class="sr-only">Description</label>
                             <textarea name="description" id="descriptionInput" placeholder="Description"
-                                class="bg-clip-text border-2 w-full p-4 rounded-lg mb-1" value="{{ old('description') }}"></textarea>
+                                class="bg-clip-text border-2 w-full h-36 p-4 rounded-lg mb-1" value="{{ old('description') }}"></textarea>
                         </div>
                         <div>
                             <button id="btn-create" type="submit"

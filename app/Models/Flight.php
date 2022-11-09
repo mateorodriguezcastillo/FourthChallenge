@@ -17,6 +17,18 @@ class Flight extends Model
         'arrival_date',
     ];
 
+    public function scopeFilter($query, $filters)
+    {
+        //where city is origin or city is destination
+        $query->when($filters['city'] ?? false, fn ($query, $city) =>
+            $query->whereHas('origin', fn ($query) =>
+                $query->where('id', $city)
+            )->orWhereHas('destination', fn ($query) =>
+                $query->where('id', $city)
+            )
+        );
+    }
+
     public function airline()
     {
         return $this->belongsTo(Airline::class);

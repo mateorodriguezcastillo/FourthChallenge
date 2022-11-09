@@ -24,8 +24,8 @@ class UpdateAirlineRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:airlines,name,' . $this->airline->id . '|string|max:100',
-            'description' => 'required|string|max:100',
+            'name' => 'required|string|max:255|unique:airlines,name,' . $this->airline->id . ',id', //unique:table,column,except,idColumn
+            'description' => 'required|string|max:255',
         ];
     }
 }

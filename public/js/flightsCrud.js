@@ -18,9 +18,15 @@ Vue.createApp({
                 cities: [],
             },
             cities: [],
+            city: {
+                id: 0,
+                name: '',
+            },
             currentPage: 'http://localhost/api/flights',
+            currentPageNumber: 0,
             defaultPageClass: 'page-link py-2 px-3 ml-0 leading-tight text-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
             activePageClass: 'page-link py-2 px-3 ml-0 leading-tight text-white border border-gray-300 bg-blue-500',
+            selectBoxClass: 'form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll',
             errors: [],
             isEdit: false
         }
@@ -34,15 +40,36 @@ Vue.createApp({
         },
         datesAreInvalid() {
             return this.flight.arrival_date != '' && this.flight.arrival_date < this.flight.departure_date
-        }
+        },
     },
     methods: {
         toggle() {
             btnOpenModal.click();
         },
+        getUrlVars(url){
+            var vars = [], hash;
+            var hashes = url.slice(url.indexOf('?') + 1).split('&');
+            for(var i = 0; i < hashes.length; i++)
+            {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        },
         getFlights() {
-            axios.get(this.currentPage)
+            let urlToPass = '/api/flights';
+            if (this.city.id && this.city.id != 0 && this.currentPageNumber > 0) {
+                urlToPass += "?city=" + this.city.id + "&page=" + this.currentPageNumber;
+            } else if (this.currentPageNumber > 0) {
+                urlToPass += "?page=" + this.currentPageNumber;
+            } else if (this.city.id && this.city.id != 0) {
+                urlToPass += "?city=" + this.city.id;
+            }
+            console.log(urlToPass);
+            axios.get(urlToPass)
                 .then(response => {
+                    console.log(response.data);
                     this.flights = response.data;
                 }
             );
@@ -108,6 +135,8 @@ Vue.createApp({
         },
         changePage(page) {
             this.currentPage = page.url;
+            this.currentPageNumber = page.label;
+            console.log(this.currentPageNumber);
             this.getFlights();
         },
         getAllAirlines() {
@@ -147,6 +176,10 @@ Vue.createApp({
             this.flight.origin_id = origin_id;
             this.flight.destination_id = 0;
         },
+        onChangeCity() {
+            this.currentPageNumber = 0;
+            this.getFlights();
+        },
         resetFields() {
             this.flight.airline_id = 0;
             this.flight.origin_id = 0;
@@ -168,7 +201,7 @@ Vue.createApp({
     mounted() {
         this.getFlights();
         this.getAllAirlines();
-        //this.getAllCities();
+        this.getAllCities();
     }
 }).mount('#flightsCrud');
 

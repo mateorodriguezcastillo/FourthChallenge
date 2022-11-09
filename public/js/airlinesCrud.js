@@ -214,6 +214,7 @@ on (document, 'click', '#editModal', e => {
 const updateAirline = (data, id) => {
     console.log(data);
     console.log(id);
+    console.log(baseUrl + '/' + id + '/update' + '?page=' + page);
     fetch(baseUrl + '/' + id + '/update' + '?page=' + page, {
         method: 'PUT',
         body: JSON.stringify(data),
