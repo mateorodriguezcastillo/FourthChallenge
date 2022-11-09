@@ -6,7 +6,6 @@ showAirlines();
 
 function table_city_row(res) {
     let htmlView = "";
-    console.log(res);
     if (res.cities.length <= 0) {
         htmlView +=
             '<tr><td colspan="5" class="text-center">No cities found.</td></tr>';
@@ -77,7 +76,6 @@ function table_city_row(res) {
 
 function select_airline(airlines) {
     let htmlView = "";
-    console.log(airlines);
     if (airlines.length <= 0) {
         htmlView +=
             '<option value="">No airlines found.</option>';
@@ -94,7 +92,6 @@ function select_airline(airlines) {
 function getUrlVars()
 {
     var vars = [], hash;
-    console.log(window.location.href);
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
     for(var i = 0; i < hashes.length; i++)
     {
@@ -107,7 +104,6 @@ function getUrlVars()
 
 function showCities(airline_id) {
     let vars = getUrlVars();
-    console.log(vars);
     let urlToPass = baseUrl + "/cities";
     if (vars.sort) {
         urlToPass += "?sort=" + vars.sort + "&direction=" + vars.direction;
@@ -118,13 +114,11 @@ function showCities(airline_id) {
     if (airline_id && airline_id != 0) {
         urlToPass += "&airline=" + airline_id;
     }
-    console.log(urlToPass);
     $.ajax({
         url: urlToPass,
         type: "GET",
         dataType: "json",
         success: function (res) {
-            console.log(res);
             table_city_row(res);
         },
         error: function (err) {
@@ -139,7 +133,6 @@ function showAirlines() {
         type: "GET",
         dataType: "json",
         success: function (res) {
-            console.log(res);
             select_airline(res);
         },
         error: function (err) {
@@ -150,7 +143,6 @@ function showAirlines() {
 
 $("button#createModal").click(function () {
     let url = $(this).data("action");
-    console.log(url);
     $("#errorName").text("");
     $("#nameInput").removeClass("border-red-500");
     $("#openModal").click();
@@ -161,7 +153,6 @@ $("button#createModal").click(function () {
 //function when select airline
 $("#selectAirline").change(function () {
     let airline_id = $(this).val();
-    console.log(airline_id);
     airline = airline_id;
     showCities(airline_id);
 });
@@ -170,7 +161,6 @@ $("#selectAirline").change(function () {
 $("#formData").submit(function (e) {
     e.preventDefault();
     let formData = new FormData(this);
-    console.log($(this).attr("action"));
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -183,8 +173,6 @@ $("#formData").submit(function (e) {
         processData: false,
         url: $(this).attr("action"),
         success: function (res) {
-            console.log(res);
-            console.log(formData);
             if (res.success == true) {
                 $("#formData").trigger("reset");
                 $("#closeModal").click();
@@ -207,7 +195,6 @@ $("#formData").submit(function (e) {
 $(document).on("click", "button#editModal", function () {
     let id = $(this).data("id");
     let dataAction = $(this).data("action");
-    console.log(dataAction);
     $("#errorName").text("");
     $("#nameInput").removeClass("border-red-500");
     $("#formData").trigger("reset");
@@ -217,7 +204,6 @@ $(document).on("click", "button#editModal", function () {
         url: baseUrl + `/cities/${id}/edit`,
         dataType: "json",
         success: function (res) {
-            console.log(res);
             $("#openModal").click();
             $("#nameInput").val(res.cities.name);
         },
@@ -227,7 +213,6 @@ $(document).on("click", "button#editModal", function () {
 $(document).on("click", "button#btn-delete", function (e) {
     e.preventDefault();
     let dataDelete = $(this).data("id");
-    // console.log(dataDelete);
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this! ",

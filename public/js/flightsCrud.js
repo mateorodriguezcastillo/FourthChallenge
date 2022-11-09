@@ -66,10 +66,8 @@ Vue.createApp({
             } else if (this.city.id && this.city.id != 0) {
                 urlToPass += "?city=" + this.city.id;
             }
-            console.log(urlToPass);
             axios.get(urlToPass)
                 .then(response => {
-                    console.log(response.data);
                     this.flights = response.data;
                 }
             );
@@ -136,7 +134,6 @@ Vue.createApp({
         changePage(page) {
             this.currentPage = page.url;
             this.currentPageNumber = page.label;
-            console.log(this.currentPageNumber);
             this.getFlights();
         },
         getAllAirlines() {

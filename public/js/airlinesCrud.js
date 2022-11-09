@@ -22,7 +22,6 @@ btnCreateModal.addEventListener('click', () => {
 //function to show all airlines
 const showAirlines = (airlines) => {
     results = '';
-    console.log(airlines);
     airlines.data.forEach(airline => {
         results += `
             <tr class="border-b border-gray-700">
@@ -81,7 +80,6 @@ fetch(baseUrl)
 
 //function to show all cities
 const showCities = (cities) => {
-    console.log(cities);
     let results = '';
     if (cities.length < 1) {
         results += `<option value="">No cities found</option>`;
@@ -137,11 +135,8 @@ function getUrlVars(url)
 
 //procedure to change page
 on(pagination, 'click', 'a', e => {
-    console.log('click')
     e.preventDefault();
     let url = e.target.getAttribute('data-url');
-    console.log(e.target.dataset.url)
-    console.log(url);
     page = getUrlVars(url).page;
     fetch(e.target.dataset.url)
         .then(res => res.json())
@@ -155,7 +150,6 @@ on(pagination, 'click', 'a', e => {
 on (document, 'click', '#btn-delete', e => {
     const row = e.target.parentNode.parentNode.parentNode;
     const id = row.firstElementChild.textContent;
-    console.log(id);
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this! ",
@@ -212,9 +206,6 @@ on (document, 'click', '#editModal', e => {
 });
 
 const updateAirline = (data, id) => {
-    console.log(data);
-    console.log(id);
-    console.log(baseUrl + '/' + id + '/update' + '?page=' + page);
     fetch(baseUrl + '/' + id + '/update' + '?page=' + page, {
         method: 'PUT',
         body: JSON.stringify(data),
