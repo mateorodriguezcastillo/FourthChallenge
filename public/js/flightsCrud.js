@@ -2,6 +2,14 @@ Vue.createApp({
     data() {
         return {
             flights: [],
+            flight: {
+                id: 0,
+                airline_id: 0,
+                origin_id: 0,
+                destination_id: 0,
+                departure_date: '',
+                arrival_date: '',
+            },
             airlines: [],
             airline: {
                 id: 0,
@@ -9,13 +17,7 @@ Vue.createApp({
                 description: '',
                 cities: [],
             },
-            airlineID: 0,
             cities: [],
-            flightID: 0,
-            originID: 0,
-            destinationID: 0,
-            departureDate: '',
-            arrivalDate: '',
             currentPage: 'http://localhost/api/flights',
             defaultPageClass: 'page-link py-2 px-3 ml-0 leading-tight text-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
             activePageClass: 'page-link py-2 px-3 ml-0 leading-tight text-white border border-gray-300 bg-blue-500',
@@ -25,13 +27,13 @@ Vue.createApp({
     },
     computed: {
         airlineCitiesWithoutOrigin() {
-            return this.airline.cities.filter(city => city.id != this.originID);
+            return this.airline.cities.filter(city => city.id != this.flight.origin_id);
         },
         readyForSubmit() {
-            return this.airlineID > 0 && this.originID > 0 && this.destinationID > 0 && this.departureDate != '' && this.arrivalDate != '' && this.departureDate < this.arrivalDate;
+            return this.flight.airline_id > 0 && this.flight.origin_id > 0 && this.flight.destination_id > 0 && this.flight.departure_date != '' && this.flight.arrival_date != '' && this.flight.departure_date < this.flight.arrival_date;
         },
         datesAreInvalid() {
-            return this.arrivalDate != '' && this.arrivalDate < this.departureDate
+            return this.flight.arrival_date != '' && this.flight.arrival_date < this.flight.departure_date
         }
     },
     methods: {
@@ -42,23 +44,15 @@ Vue.createApp({
             axios.get(this.currentPage)
                 .then(response => {
                     this.flights = response.data;
-                    console.log(JSON.parse(JSON.stringify(this.flights)));
                 }
             );
         },
         createFlight() {
-            axios.post('/api/flights', {
-                airline_id: this.airlineID,
-                origin_id: this.originID,
-                destination_id: this.destinationID,
-                departure_date: this.departureDate,
-                arrival_date: this.arrivalDate
-                })
+            axios.post('/api/flights', this.flight)
                 .then(response => {
                     this.resetFields();
                     this.getFlights();
                     this.errors = [];
-                    console.log(response.data);
                     this.toggle();
                     this.actionCompletedSwal("created");
                 }
@@ -72,26 +66,13 @@ Vue.createApp({
             axios.get('/api/airlines/' + flight.airline_id)
                     .then(response => {
                         this.airline = response.data;
-                        console.log(JSON.parse(JSON.stringify(this.airline)));
                     }
                 );
-            this.flightID = flight.id;
-            this.airlineID = flight.airline_id;
-            this.originID = flight.origin_id;
-            this.destinationID = flight.destination_id;
-            this.departureDate = flight.departure_date;
-            this.arrivalDate = flight.arrival_date;
+            this.flight = flight;
             this.isEdit = true;
         },
         updateFlight() {
-            console.log('updateFlight');
-            axios.put('/api/flights/' + this.flightID + '/update', {
-                airline_id: this.airlineID,
-                origin_id: this.originID,
-                destination_id: this.destinationID,
-                departure_date: this.departureDate,
-                arrival_date: this.arrivalDate
-            })
+            axios.put('/api/flights/' + this.flight.id + '/update', this.flight)
                 .then(response => {
                     this.getFlights();
                     this.resetFields();
@@ -126,7 +107,6 @@ Vue.createApp({
             })
         },
         changePage(page) {
-            console.log("click")
             this.currentPage = page.url;
             this.getFlights();
         },
@@ -134,7 +114,6 @@ Vue.createApp({
             axios.get('/api/airlines/all')
                 .then(response => {
                     this.airlines = response.data;
-                    console.log(JSON.parse(JSON.stringify(this.airlines)));
                 }
             );
         },
@@ -142,17 +121,14 @@ Vue.createApp({
             axios.get('/api/cities/all')
                 .then(response => {
                     this.cities = response.data;
-                    console.log(JSON.parse(JSON.stringify(this.cities)));
                 }
             );
         },
         onChangeAirline(airline_id) {
-            console.log(airline_id);
             if (airline_id != 0) {
                 axios.get('/api/airlines/' + airline_id)
                     .then(response => {
                         this.airline = response.data;
-                        console.log(JSON.parse(JSON.stringify(this.airline)));
                     }
                 );
             } else {
@@ -163,25 +139,20 @@ Vue.createApp({
                     cities: [],
                 };
             }
-            this.airlineID = airline_id;
-            this.originID = 0;
-            this.destinationID = 0;
+            this.flight.airline_id = airline_id;
+            this.flight.origin_id = 0;
+            this.flight.destination_id = 0;
         },
         onChangeOrigin(origin_id) {
-            console.log(origin_id);
-            this.originID = origin_id;
-            this.destinationID = 0;
-        },
-        onChangeDepartureDate(departure_date) {
-            console.log(departure_date);
-            this.departureDate = departure_date;
+            this.flight.origin_id = origin_id;
+            this.flight.destination_id = 0;
         },
         resetFields() {
-            this.airlineID = 0;
-            this.originID = 0;
-            this.destinationID = 0;
-            this.departureDate ='';
-            this.arrivalDate ='';
+            this.flight.airline_id = 0;
+            this.flight.origin_id = 0;
+            this.flight.destination_id = 0;
+            this.flight.departure_date ='';
+            this.flight.arrival_date ='';
         },
         actionCompletedSwal(action) {
             Swal.fire({

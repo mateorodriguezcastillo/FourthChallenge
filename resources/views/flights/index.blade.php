@@ -30,17 +30,17 @@
                     <form id="frmFlights" name="frmFlights" class="w-full" action="" method="POST" @submit.prevent>
                         @csrf
                         <div class="mb-4">
-                            <select name="airline_id" id="airline_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeAirline(airlineID)" v-model="airlineID">
+                            <select name="airline_id" id="airline_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeAirline(flight.airline_id)" v-model="flight.airline_id">
                                 <option value="0">Select Airline</option>
                                 <option v-for="airline in airlines" :value="airline.id">@{{ airline.name }}</option>
                             </select>
                             <span class="text-red-500" id="airline_id_error"></span>
-                            <select :disabled="airlineID == 0" name="origin_id" id="origin_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeOrigin(originID)" v-model="originID">
+                            <select :disabled="flight.airline_id == 0" name="origin_id" id="origin_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeOrigin(flight.origin_id)" v-model="flight.origin_id">
                                 <option value="0">Select Origin</option>
                                 <option v-for="city in airline.cities" :value="city.id">@{{ city.name }}</option>
                             </select>
                             <span class="text-red-500" id="origin_id_error"></span>
-                            <select :disabled="originID == 0" name="destination_id" id="destination_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" v-model="destinationID">
+                            <select :disabled="flight.origin_id == 0" name="destination_id" id="destination_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" v-model="flight.destination_id">
                                 <option value="0">Select Destination</option>
                                 <option v-for="city in airlineCitiesWithoutOrigin" :value="city.id">@{{ city.name }}</option>
                             </select>
@@ -48,13 +48,13 @@
                             {{-- Departure Date --}}
                             <div class="relative">
                                 <label for="departure_date" class="text-sm font-medium text-gray-400">Departure Date</label>
-                                <input type="date" name="departure_date" id="departure_date" class="form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg" style="color-scheme: dark" @change="onChangeDepartureDate(departureDate)" v-model="departureDate">
+                                <input type="date" name="departure_date" id="departure_date" class="form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg" style="color-scheme: dark" v-model="flight.departure_date">
                                 <span class="text-red-500" id="departure_date_error"></span>
                             </div>
                             {{-- Arrival Date --}}
                             <div class="relative">
                                 <label for="arrival_date" class="text-sm font-medium text-gray-400">Arrival Date</label>
-                                <input type="date" name="arrival_date" id="arrival_date" :class="datesAreInvalid ? 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-red-500 rounded-lg' : 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg'" style="color-scheme: dark" v-model="arrivalDate">
+                                <input type="date" name="arrival_date" id="arrival_date" :class="datesAreInvalid ? 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-red-500 rounded-lg' : 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg'" style="color-scheme: dark" v-model="flight.arrival_date">
                                 <span class="text-red-500" id="arrival_date_error">@{{ datesAreInvalid ? "Psst... Unless you can travel threw time, you can't arrive before your departure" : ""}}</span>
                             </div>
                         </div>
