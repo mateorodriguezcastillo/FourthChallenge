@@ -33,4 +33,6 @@ Route::put('/airlines/{airline}/update', [AirlineController::class,'update'])->n
 Route::delete('/airlines/{airline}/delete', [AirlineController::class,'destroy'])->name('airlines.destroy');
 
 Route::get('/flights', [FlightController::class,'get'])->name('flights.get');
+Route::post('/flights', [FlightController::class,'store'])->name('flights.store');
+Route::put('/flights/{flight}/update', [FlightController::class,'update'])->name('flights.update');
 Route::delete('/flights/{flight}/delete', [FlightController::class,'destroy'])->name('flights.destroy');

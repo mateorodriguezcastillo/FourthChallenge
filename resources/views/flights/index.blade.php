@@ -13,7 +13,7 @@
                     <h3 class="text-xl font-semibold dark:text-white">
                         Manage Flight
                     </h3>
-                    <button type="button" id="btnCloseModal" data-modal-toggle="defaultModal"
+                    <button type="button" id="closeModal" data-modal-toggle="defaultModal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
                         data-modal-toggle="defaultModal">
                         <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -27,7 +27,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-6 space-y-6">
-                    <form method="POST" id="formData">
+                    <form id="frmFlights" name="frmFlights" class="w-full" action="" method="POST" @submit.prevent>
                         @csrf
                         <div class="mb-4">
                             <select name="airline_id" id="airline_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeAirline(airlineID)" v-model="airlineID">
@@ -35,32 +35,32 @@
                                 <option v-for="airline in airlines" :value="airline.id">@{{ airline.name }}</option>
                             </select>
                             <span class="text-red-500" id="airline_id_error"></span>
-                            <select name="origin_id" id="origin_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeOrigin(originID)" v-model="originID">
+                            <select :disabled="airlineID == 0" name="origin_id" id="origin_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" @change="onChangeOrigin(originID)" v-model="originID">
                                 <option value="0">Select Origin</option>
                                 <option v-for="city in airline.cities" :value="city.id">@{{ city.name }}</option>
                             </select>
                             <span class="text-red-500" id="origin_id_error"></span>
-                            <select name="destination_id" id="destination_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll">
+                            <select :disabled="originID == 0" name="destination_id" id="destination_id" class="form-select block w-full mb-2 bg-gray-900 text-white border-2 border-white rounded-lg max-h-12 overflow-scroll" v-model="destinationID">
                                 <option value="0">Select Destination</option>
-                                <option v-for="city in airline.cities" :value="city.id">@{{ city.name }}</option>
+                                <option v-for="city in airlineCitiesWithoutOrigin" :value="city.id">@{{ city.name }}</option>
                             </select>
                             <span class="text-red-500" id="destination_id_error"></span>
                             {{-- Departure Date --}}
                             <div class="relative">
                                 <label for="departure_date" class="text-sm font-medium text-gray-400">Departure Date</label>
-                                <input type="date" name="departure_date" id="departure_date" class="form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg">
+                                <input type="date" name="departure_date" id="departure_date" class="form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg" style="color-scheme: dark" @change="onChangeDepartureDate(departureDate)" v-model="departureDate">
                                 <span class="text-red-500" id="departure_date_error"></span>
                             </div>
                             {{-- Arrival Date --}}
                             <div class="relative">
                                 <label for="arrival_date" class="text-sm font-medium text-gray-400">Arrival Date</label>
-                                <input type="date" name="arrival_date" id="arrival_date" class="form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg">
-                                <span class="text-red-500" id="arrival_date_error"></span>
+                                <input type="date" name="arrival_date" id="arrival_date" :class="datesAreInvalid ? 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-red-500 rounded-lg' : 'form-input block w-full mt-1 bg-gray-900 text-white border-2 border-white rounded-lg'" style="color-scheme: dark" v-model="arrivalDate">
+                                <span class="text-red-500" id="arrival_date_error">@{{ datesAreInvalid ? "Psst... Unless you can travel threw time, you can't arrive before your departure" : ""}}</span>
                             </div>
                         </div>
                         <div>
-                            <button id="btn-create" type="submit"
-                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full">
+                            <button id="btn-create" :disabled="!readyForSubmit" @click="isEdit ? updateFlight() : createFlight()"
+                                :class="readyForSubmit ? 'bg-blue-500 text-white px-4 py-3 rounded font-medium w-full' : 'bg-blue-200 text-white px-4 py-3 rounded font-medium w-full'">
                                 Save Changes
                             </button>
                         </div>
@@ -105,13 +105,13 @@
                                 <td class="px-4 py-2 border-b border-white">@{{ flight.airline.name }}</td>
                                 <td class="px-4 py-2 border-b border-white">@{{ flight.origin.name }}</td>
                                 <td class="px-4 py-2 border-b border-white">@{{ flight.destination.name }}</td>
-                                <td class="px-4 py-2 border-b border-white">@{{ flight.departure }}</td>
-                                <td class="px-4 py-2 border-b border-white">@{{ flight.arrival }}</td>
+                                <td class="px-4 py-2 border-b border-white">@{{ flight.departure_date }}</td>
+                                <td class="px-4 py-2 border-b border-white">@{{ flight.arrival_date }}</td>
                                 <td class="px-4 py-2 border-b border-white">
                                     <div class="flex inline-flex mb-1 mt-1">
                                         <button data-action="{{ route('cities.update', ':id') }}"
                                             class="block text-white bg-yellow-300 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium mr-1 rounded-md text-sm px-3 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                            @click="edit(flight)">
+                                            @click="editFlight(flight)">
                                             Edit
                                         </button>
                                         <button

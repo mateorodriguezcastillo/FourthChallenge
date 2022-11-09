@@ -21,7 +21,7 @@
         </div>
         <div>
             <div class="flex justify-center mt-2 mb-4 pt-8 sm:pt-0">
-                <div class="text-gray-400 font-bold text-3xl">Welcome to Travel Agency</div>
+                <div class="text-gray-400 font-bold text-3xl">The way to fly</div>
             </div>
         </div>
         <div class="container mx-auto text-white rounded">

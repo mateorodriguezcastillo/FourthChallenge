@@ -17,8 +17,8 @@ class FlightFactory extends Factory
     public function definition()
     {
         return [
-            'departure' => fake()->dateTimeBetween('-1 year', today()),
-            'arrival' => fake()->dateTimeBetween(today(), '+1 year'),
+            'departure_date' => fake()->dateTimeBetween('-1 year', today()),
+            'arrival_date' => fake()->dateTimeBetween(today(), '+1 year'),
         ];
     }
 }
